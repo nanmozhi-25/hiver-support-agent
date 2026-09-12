@@ -1,0 +1,42 @@
+# Escalation Policy Configuration
+# Defines thresholds, risk triggers, and rules for auto-handling vs human escalation.
+
+thresholds:
+  # Minimum classifier confidence required to auto-handle
+  min_intent_confidence: 0.65
+  # Minimum vector retrieval similarity score to consider historical evidence reliable
+  min_retrieval_similarity: 0.60
+  # Minimum combined evidence strength score
+  min_evidence_strength: 0.55
+
+risk_rules:
+  # Sensitive keywords that ALWAYS trigger immediate human escalation regardless of confidence
+  sensitive_keywords:
+    - "fraud"
+    - "stolen"
+    - "hacked"
+    - "compromised"
+    - "lawyer"
+    - "legal"
+    - "sue"
+    - "police"
+    - "court"
+    - "unauthorized"
+    - "scam"
+    - "identity theft"
+    - "breach"
+    - "harass"
+    - "threat"
+
+  # Intents requiring strict handling (always check retrieval evidence strength)
+  high_risk_intents:
+    - "account_compromise"
+    - "unauthorized_charge"
+    - "legal_inquiry"
+
+policy_messages:
+  low_confidence: "The predicted intent confidence ({confidence:.2f}) is below the auto-handling threshold ({threshold:.2f})."
+  low_similarity: "The top retrieved historical match similarity ({similarity:.2f}) is below the required evidence threshold ({threshold:.2f})."
+  sensitive_keyword: "Message contains high-risk/sensitive keyword trigger: '{keyword}'."
+  insufficient_evidence: "Historical resolution evidence is insufficient or inconsistent for safe automation."
+  auto_handle_success: "High intent confidence ({confidence:.2f}) and strong historical evidence ({similarity:.2f}) support automated response."

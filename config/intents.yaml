@@ -1,0 +1,130 @@
+# Intent Taxonomy for AmazonHelp Customer Support
+# Derived from historical customer support interactions in twcs.csv
+
+intents:
+  - name: delivery_delay
+    description: Customer is asking about a delayed, late, missing, or untracked package/delivery.
+    inclusion_criteria:
+      - Messages mentioning non-arrival, tracking status stuck, delayed shipment, or missed delivery date.
+    exclusion_criteria:
+      - Messages explicitly requesting a refund due to non-delivery (classify as refund_request).
+      - Messages about physically damaged items received (classify as damaged_defective).
+    positive_examples:
+      - "My package was supposed to arrive yesterday but tracking shows it hasn't shipped yet."
+      - "Where is my order #123-4567890? It says delivered but I haven't received anything!"
+      - "Order tracking hasn't updated in 4 days. Is my item lost?"
+    confusing_with:
+      - refund_request
+      - damaged_defective
+
+  - name: refund_request
+    description: Customer is requesting a refund, checking missing refund money, or asking about refund processing time.
+    inclusion_criteria:
+      - Direct mentions of refund, money back, credit to account, or reimbursement.
+    exclusion_criteria:
+      - Return requests without explicit mention of refund processing (classify as return_exchange).
+    positive_examples:
+      - "I returned my item 2 weeks ago and still haven't received my refund."
+      - "Can I get a full refund for this delayed order?"
+      - "When will the refund show up in my bank account?"
+    confusing_with:
+      - return_exchange
+      - payment_billing
+
+  - name: order_cancellation
+    description: Customer wants to cancel an active order or is asking why their order was automatically cancelled.
+    inclusion_criteria:
+      - Requests to cancel, stop shipment, or inquiries regarding unexpected cancellation.
+    exclusion_criteria:
+      - Requests to return an already delivered order (classify as return_exchange).
+    positive_examples:
+      - "Please cancel my order #987-654321 immediately."
+      - "Why was my order cancelled without my permission?"
+      - "I accidentally ordered the wrong size, how do I cancel before it ships?"
+    confusing_with:
+      - return_exchange
+      - refund_request
+
+  - name: return_exchange
+    description: Customer is asking how to return an item, request a return label, or exchange for a different item.
+    inclusion_criteria:
+      - Inquiries about return policy, drop-off locations, return shipping labels, or size exchanges.
+    exclusion_criteria:
+      - Direct status checks on pending monetary refund (classify as refund_request).
+    positive_examples:
+      - "How do I print a return label for my recent purchase?"
+      - "I need to exchange these shoes for a size 10."
+      - "What is the return window for electronics?"
+    confusing_with:
+      - refund_request
+      - damaged_defective
+
+  - name: account_access
+    description: Customer is experiencing login failures, password reset problems, account lockouts, or verification issues.
+    inclusion_criteria:
+      - Account lockout, login error, 2FA code issues, email verification, or password reset problems.
+    exclusion_criteria:
+      - Suspected unauthorized account takeover/hacking (requires safety escalation).
+    positive_examples:
+      - "I am locked out of my account and not receiving the password reset email."
+      - "Can't log into my account, it keeps saying invalid credentials."
+      - "How do I update my primary email address when I can't access my old phone?"
+    confusing_with:
+      - digital_prime_issue
+      - payment_billing
+
+  - name: digital_prime_issue
+    description: Customer is reporting issues with Amazon Prime membership, Prime Video, Kindle, Music, or digital content.
+    inclusion_criteria:
+      - Streaming buffer errors, Prime auto-renewal charges, digital book download errors, subscription cancellations.
+    exclusion_criteria:
+      - Physical package delivery delays for Prime orders (classify as delivery_delay).
+    positive_examples:
+      - "Prime Video is giving me error code 7031 on my smart TV."
+      - "I was charged $14.99 for Prime but I thought I cancelled my subscription."
+      - "My Kindle book purchased an hour ago isn't showing up in my library."
+    confusing_with:
+      - account_access
+      - payment_billing
+
+  - name: payment_billing
+    description: Customer is reporting payment failure, double charge, incorrect invoice amount, or gift card/promo code issues.
+    inclusion_criteria:
+      - Credit card rejection, unexpected double billing, promo code not applying, or gift card balance error.
+    exclusion_criteria:
+      - Refund status checks for returned physical items (classify as refund_request).
+    positive_examples:
+      - "My credit card was charged twice for the same order."
+      - "Why is my payment method being declined when the card is valid?"
+      - "My promotional code isn't discounting the price at checkout."
+    confusing_with:
+      - refund_request
+      - digital_prime_issue
+
+  - name: damaged_defective
+    description: Customer received a damaged package, broken item, defective product, or wrong item.
+    inclusion_criteria:
+      - Physical damage, broken parts, missing components in package, or wrong item delivered.
+    exclusion_criteria:
+      - Intact package that simply arrived late (classify as delivery_delay).
+    positive_examples:
+      - "My package arrived completely crushed and the screen inside is shattered."
+      - "I ordered a toaster but received a blender instead!"
+      - "The item I received is missing key parts listed in the manual."
+    confusing_with:
+      - delivery_delay
+      - return_exchange
+
+  - name: general_inquiry
+    description: General questions regarding store policies, shipping options, product availability, or general customer support.
+    inclusion_criteria:
+      - Policy questions, stock availability, customer service hours, or general feedback.
+    exclusion_criteria:
+      - Specific actionable problems matching any of the above 8 intents.
+    positive_examples:
+      - "Do you ship internationally to Canada?"
+      - "When will this item be back in stock?"
+      - "How do I contact customer support by phone?"
+    confusing_with:
+      - delivery_delay
+      - return_exchange

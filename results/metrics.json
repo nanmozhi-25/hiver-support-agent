@@ -1,0 +1,299 @@
+{
+  "timestamp": "2026-09-12 09:16:20",
+  "total_execution_seconds": 14.45,
+  "baselines": {
+    "majority_baseline": {
+      "model": "Majority Baseline",
+      "majority_intent": "general_inquiry",
+      "accuracy": 0.735,
+      "macro_precision": 0.0817,
+      "macro_recall": 0.1111,
+      "macro_f1": 0.0941,
+      "weighted_f1": 0.6227,
+      "per_intent": {
+        "account_access": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 5.0
+        },
+        "damaged_defective": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "delivery_delay": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 25.0
+        },
+        "digital_prime_issue": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 10.0
+        },
+        "general_inquiry": {
+          "precision": 0.735,
+          "recall": 1.0,
+          "f1-score": 0.8472622478386167,
+          "support": 147.0
+        },
+        "order_cancellation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "payment_billing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "refund_request": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 7.0
+        },
+        "return_exchange": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "accuracy": 0.735,
+        "macro avg": {
+          "precision": 0.08166666666666667,
+          "recall": 0.1111111111111111,
+          "f1-score": 0.0941402497598463,
+          "support": 200.0
+        },
+        "weighted avg": {
+          "precision": 0.540225,
+          "recall": 0.735,
+          "f1-score": 0.6227377521613833,
+          "support": 200.0
+        }
+      }
+    },
+    "tfidf_logistic_baseline": {
+      "model": "TF-IDF + Logistic Regression",
+      "accuracy": 0.915,
+      "macro_precision": 0.8293,
+      "macro_recall": 0.8629,
+      "macro_f1": 0.8429,
+      "weighted_f1": 0.9174,
+      "per_intent": {
+        "account_access": {
+          "precision": 0.6666666666666666,
+          "recall": 0.8,
+          "f1-score": 0.7272727272727273,
+          "support": 5.0
+        },
+        "damaged_defective": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "delivery_delay": {
+          "precision": 0.7931034482758621,
+          "recall": 0.92,
+          "f1-score": 0.8518518518518519,
+          "support": 25.0
+        },
+        "digital_prime_issue": {
+          "precision": 0.6923076923076923,
+          "recall": 0.9,
+          "f1-score": 0.782608695652174,
+          "support": 10.0
+        },
+        "general_inquiry": {
+          "precision": 0.9785714285714285,
+          "recall": 0.9319727891156463,
+          "f1-score": 0.9547038327526133,
+          "support": 147.0
+        },
+        "order_cancellation": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 2.0
+        },
+        "payment_billing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "refund_request": {
+          "precision": 0.8333333333333334,
+          "recall": 0.7142857142857143,
+          "f1-score": 0.7692307692307693,
+          "support": 7.0
+        },
+        "return_exchange": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 2.0
+        },
+        "accuracy": 0.915,
+        "macro avg": {
+          "precision": 0.8293313965727758,
+          "recall": 0.86291761148904,
+          "f1-score": 0.8428519863066817,
+          "support": 200.0
+        },
+        "weighted avg": {
+          "precision": 0.9238366489832007,
+          "recall": 0.915,
+          "f1-score": 0.917424128442156,
+          "support": 200.0
+        }
+      }
+    }
+  },
+  "main_system": {
+    "intent_classifier": {
+      "model": "Main Intent Classifier (Calibrated TF-IDF Logistic)",
+      "accuracy": 0.935,
+      "macro_precision": 0.6889,
+      "macro_recall": 0.6782,
+      "macro_f1": 0.6738,
+      "weighted_f1": 0.9247,
+      "mean_confidence": 0.8324,
+      "per_intent": {
+        "account_access": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1-score": 0.8888888888888888,
+          "support": 5.0
+        },
+        "damaged_defective": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "delivery_delay": {
+          "precision": 0.8888888888888888,
+          "recall": 0.96,
+          "f1-score": 0.9230769230769231,
+          "support": 25.0
+        },
+        "digital_prime_issue": {
+          "precision": 0.8333333333333334,
+          "recall": 0.5,
+          "f1-score": 0.625,
+          "support": 10.0
+        },
+        "general_inquiry": {
+          "precision": 0.9539473684210527,
+          "recall": 0.9863945578231292,
+          "f1-score": 0.9698996655518395,
+          "support": 147.0
+        },
+        "order_cancellation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "payment_billing": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "refund_request": {
+          "precision": 0.8571428571428571,
+          "recall": 0.8571428571428571,
+          "f1-score": 0.8571428571428571,
+          "support": 7.0
+        },
+        "return_exchange": {
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1-score": 0.8,
+          "support": 2.0
+        },
+        "accuracy": 0.935,
+        "macro avg": {
+          "precision": 0.6888865682725333,
+          "recall": 0.6781708238851096,
+          "f1-score": 0.6737787038511676,
+          "support": 200.0
+        },
+        "weighted avg": {
+          "precision": 0.9205957602339181,
+          "recall": 0.935,
+          "f1-score": 0.9247330917874396,
+          "support": 200.0
+        }
+      }
+    },
+    "retrieval": {
+      "num_golden_queries": 200,
+      "mean_top1_similarity": 0.4419,
+      "mean_top3_similarity": 0.3527,
+      "mrr_threshold_0.50": 0.265,
+      "pct_queries_with_evidence_gt_0.50": 0.265
+    },
+    "escalation_engine": {
+      "accuracy": 0.335,
+      "macro_f1": 0.3322,
+      "false_auto_handle_count": 0,
+      "false_escalation_count": 133,
+      "false_auto_handle_rate": 0.0,
+      "classification_report": {
+        "AUTO_HANDLE": {
+          "precision": 1.0,
+          "recall": 0.16875,
+          "f1-score": 0.2887700534759358,
+          "support": 160.0
+        },
+        "ESCALATE": {
+          "precision": 0.23121387283236994,
+          "recall": 1.0,
+          "f1-score": 0.3755868544600939,
+          "support": 40.0
+        },
+        "accuracy": 0.335,
+        "macro avg": {
+          "precision": 0.6156069364161849,
+          "recall": 0.584375,
+          "f1-score": 0.3321784539680148,
+          "support": 200.0
+        },
+        "weighted avg": {
+          "precision": 0.846242774566474,
+          "recall": 0.335,
+          "f1-score": 0.3061334136727675,
+          "support": 200.0
+        }
+      }
+    },
+    "reply_quality": {
+      "num_replies_evaluated": 50,
+      "mean_overall_score": 3.72,
+      "mean_correctness": 4.0,
+      "mean_grounding": 3.02,
+      "mean_relevance": 3.28,
+      "mean_actionability": 4.0,
+      "mean_tone": 4.0,
+      "mean_hallucination_safety": 4.0
+    },
+    "human_llm_agreement": {
+      "num_human_samples": 50,
+      "exact_agreement": 0.8,
+      "within_1_point_agreement": 1.0,
+      "cohen_kappa_quadratic": 0.0,
+      "pearson_correlation": 0.6066
+    }
+  }
+}

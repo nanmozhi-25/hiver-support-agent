@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiver AI Customer Support Agent & Evaluation Dashboard — AmazonHelp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(18, 26, 43, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-primary: #6366f1;
+      --accent-secondary: #ec4899;
+      --accent-cyan: #06b6d4;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success-green: #10b981;
+      --warning-amber: #f59e0b;
+      --danger-red: #ef4444;
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 45%);
+    }
+
+    header {
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 25, 0.8);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.2rem;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+    }
+    .brand-text h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
+    .brand-text p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .status-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success-green);
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .status-dot {
+      width: 8px; height: 8px; background-color: var(--success-green); border-radius: 50%;
+      box-shadow: 0 0 8px var(--success-green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .tabs-nav {
+      display: flex; gap: 0.5rem;
+      padding: 1rem 2rem 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .tab-btn {
+      background: transparent; border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      font-family: inherit; font-size: 0.95rem; font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--text-main); }
+    .tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    main {
+      flex: 1; padding: 2rem;
+      max-width: 1300px; width: 100%; margin: 0 auto;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Interactive Agent Layout */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) { .agent-grid { grid-template-columns: 1fr; } }
+
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .card-title {
+      font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .preset-chips {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px; font-size: 0.8rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .chip:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text-main);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    textarea {
+      width: 100%; height: 100px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.85rem;
+      color: var(--text-main); font-family: inherit; font-size: 0.95rem;
+      resize: none; outline: none; transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent-primary); }
+
+    .btn-submit {
+      width: 100%; margin-top: 1rem;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+      color: white; border: none; border-radius: 12px;
+      font-weight: 600; font-size: 1rem; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6); }
+
+    /* Pipeline Result Displays */
+    .decision-banner {
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .decision-banner.AUTO_HANDLE {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success-green);
+    }
+    .decision-banner.ESCALATE {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger-red);
+    }
+    .action-tag {
+      font-weight: 700; font-size: 1.1rem; letter-spacing: 0.05em;
+    }
+    .decision-reason {
+      font-size: 0.85rem; margin-top: 0.25rem; opacity: 0.9;
+    }
+
+    .metric-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      padding: 0.85rem; border-radius: 10px;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-val { font-size: 1.2rem; font-weight: 600; margin-top: 0.2rem; color: var(--accent-cyan); }
+
+    .evidence-item {
+      background: rgba(0, 0, 0, 0.2);
+      border-left: 3px solid var(--accent-primary);
+      padding: 0.75rem 1rem; border-radius: 0 8px 8px 0;
+      margin-bottom: 0.75rem; font-size: 0.85rem;
+    }
+    .evidence-header {
+      display: flex; justify-content: space-between; font-weight: 500; margin-bottom: 0.3rem;
+      color: var(--accent-cyan);
+    }
+
+    .reply-box {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 1.25rem; border-radius: 12px;
+      font-size: 0.95rem; line-height: 1.5;
+    }
+
+    /* Table Styles */
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--card-border); }
+    th { font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; }
+    tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+    .metric-table-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 1.5rem; text-align: center;
+      font-size: 0.85rem; color: var(--text-muted); margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-title">
+      <div class="brand-logo">H</div>
+      <div class="brand-text">
+        <h1>AI Support Agent & Evaluation Dashboard</h1>
+        <p>AmazonHelp Customer Support Pipeline (`twcs.csv` Dataset)</p>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      Live Local Host Server (Port 8000)
+    </div>
+  </header>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('agent')">🤖 Interactive Support Agent</button>
+    <button class="tab-btn" onclick="switchTab('evaluation')">📊 Evaluation Metrics & Benchmarks</button>
+    <button class="tab-btn" onclick="switchTab('golden')">⭐ Golden Set Explorer (200 Examples)</button>
+    <button class="tab-btn" onclick="switchTab('failures')">⚠️ Failure Mode Analysis</button>
+  </div>
+
+  <main>
+
+    <!-- TAB 1: INTERACTIVE AGENT -->
+    <div id="tab-agent" class="tab-content active">
+      <div class="agent-grid">
+        
+        <div class="glass-card">
+          <div class="card-title">
+            <span>Customer Query Input</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Brand: AmazonHelp</span>
+          </div>
+
+          <div class="preset-chips">
+            <span class="chip" onclick="setQuery('Where is my refund for order #112-84920?')">Refund Request</span>
+            <span class="chip" onclick="setQuery('My package tracking status has not updated in 5 days')">Delivery Delay</span>
+            <span class="chip" onclick="setQuery('I forgot my password and cannot sign into my account')">Account Access</span>
+            <span class="chip" onclick="setQuery('My credit card was charged twice for the same purchase')">Double Billing</span>
+            <span class="chip" onclick="setQuery('My account was hacked and unauthorized purchases were made!')">Security Trigger (Escalate)</span>
+          </div>
+
+          <textarea id="query-input" placeholder="Type a customer support message or select a preset chip above..."></textarea>
+
+          <button class="btn-submit" onclick="processQuery()">Process Through Support Pipeline</button>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">
+            <span>Support Pipeline Output</span>
+            <span id="output-spinner" style="display: none; font-size: 0.85rem; color: var(--accent-primary);">Processing...</span>
+          </div>
+
+          <div id="results-placeholder" style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 3rem 0;">
+            Enter a query on the left to see intent classification, vector retrieval evidence, grounded reply draft, and escalation routing decision.
+          </div>
+
+          <div id="results-container" style="display: none;">
+            <div id="decision-banner" class="decision-banner AUTO_HANDLE">
+              <div>
+                <div class="action-tag" id="res-action">AUTO_HANDLE</div>
+                <div class="decision-reason" id="res-reason">Rationale...</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 0.75rem; opacity: 0.8;">EVIDENCE STRENGTH</div>
+                <div style="font-size: 1.1rem; font-weight: 600;" id="res-evidence-strength">0.85</div>
+              </div>
+            </div>
+
+            <div class="metric-row">
+              <div class="stat-box">
+                <div class="stat-label">Predicted Intent</div>
+                <div class="stat-val" id="res-intent">delivery_delay</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Calibrated Confidence</div>
+                <div class="stat-val" id="res-confidence">0.9959</div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">TOP HISTORICAL RESOLUTION EVIDENCE</div>
+              <div id="evidence-list"></div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">GROUNDED DRAFT REPLY</div>
+              <div class="reply-box" id="res-reply">Reply message text...</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: EVALUATION METRICS -->
+    <div id="tab-evaluation" class="tab-content">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="card-title">Comparative Performance Metrics (Golden Set: 200 Examples)</div>
+        <table>
+          <thead>
+            <tr>
+              <th>System Model</th>
+              <th>Accuracy</th>
+              <th>Macro F1</th>
+              <th>Weighted F1</th>
+              <th>Safety / Escalation Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Majority Class Baseline</strong></td>
+              <td class="metric-table-val">73.50%</td>
+              <td class="metric-table-val">9.41%</td>
+              <td class="metric-table-val">62.27%</td>
+              <td>Predicts `general_inquiry` majority class</td>
+            </tr>
+            <tr>
+              <td><strong>TF-IDF + Logistic Regression Baseline</strong></td>
+              <td class="metric-table-val">91.50%</td>
+              <td class="metric-table-val">84.29%</td>
+              <td class="metric-table-val">91.74%</td>
+              <td>Uncalibrated linear baseline</td>
+            </tr>
+            <tr style="background: rgba(99, 102, 241, 0.1);">
+              <td><strong>Proposed AI Support Agent System</strong></td>
+              <td class="metric-table-val" style="color: var(--success-green);">93.50%</td>
+              <td class="metric-table-val" style="color: var(--accent-cyan);">67.38%</td>
+              <td class="metric-table-val" style="color: var(--success-green);">92.47%</td>
+              <td style="color: var(--success-green); font-weight: 600;">0.00% False Auto-Handle Rate (0 Unsafe Replies)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="agent-grid">
+        <div class="glass-card">
+          <div class="card-title">LLM-as-Judge Reply Quality (0–4 Scale)</div>
+          <table>
+            <tr><td>Overall Quality Score</td><td class="metric-table-val">3.72 / 4.00</td></tr>
+            <tr><td>Correctness</td><td class="metric-table-val">4.00 / 4.00</td></tr>
+            <tr><td>Actionability</td><td class="metric-table-val">4.00 / 4.00</td></tr>
+            <tr><td>Tone & Courtesy</td><td class="metric-table-val">4.00 / 4.00</td></tr>
+            <tr><td>Hallucination / Safety</td><td class="metric-table-val">4.00 / 4.00</td></tr>
+            <tr><td>Grounding in Evidence</td><td class="metric-table-val">3.02 / 4.00</td></tr>
+          </table>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">Human Agreement Benchmark (50 Samples)</div>
+          <table>
+            <tr><td>Exact Score Agreement</td><td class="metric-table-val">80.00%</td></tr>
+            <tr><td>Within-1-Point Agreement</td><td class="metric-table-val">100.00%</td></tr>
+            <tr><td>Pearson Correlation</td><td class="metric-table-val">0.6066</td></tr>
+            <tr><td>Quadratic Cohen's Kappa</td><td class="metric-table-val">0.0000</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: GOLDEN SET EXPLORER -->
+    <div id="tab-golden" class="tab-content">
+      <div class="glass-card">
+        <div class="card-title">
+          <span>Golden Evaluation Set Explorer (200 Stratified Examples)</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Data Isolated from Training & Tuning</span>
+        </div>
+        <div style="max-height: 500px; overflow-y: auto;">
+          <table id="golden-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer Query Text</th>
+                <th>True Intent</th>
+                <th>Expected Action</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody id="golden-tbody">
+              <tr><td colspan="5" style="text-align: center;">Loading Golden Evaluation Set...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: FAILURE ANALYSIS -->
+    <div id="tab-failures" class="tab-content">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="card-title" style="color: var(--warning-amber);">Mandatory Section: "WHAT IS MISLEADING ABOUT MY HEADLINE NUMBER?"</div>
+        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          A <strong>93.50% Accuracy</strong> score does NOT mean 93.50% of customer support interactions can safely be automated.<br><br>
+          1. <strong>Class Imbalance Masking Minority Intent Failures</strong>: `general_inquiry` makes up 73.50% of messages. While accuracy is 93.50%, the Macro F1 is <strong>67.38%</strong> due to lower recall on rare intents like `damaged_defective`.<br>
+          2. <strong>Vector Retrieval Coverage Bottleneck</strong>: High retrieval similarity (>= 0.60) is achieved on only 26.50% of queries.<br>
+          3. <strong>Asymmetry of Failure Costs</strong>: A false escalation costs ~$2-$5 in human labor. A false auto-handle sends an incorrect reply to a frustrated customer, causing churn and legal risk.
+        </p>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-title">5 Real Failure Modes Analysis</div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="evidence-item">
+            <strong style="color: var(--accent-secondary);">1. Multi-Intent Blending:</strong> "My package says delivered 3 days ago but nothing arrived! I want my money refunded." (Delivery Delay vs Refund Request)
+          </div>
+          <div class="evidence-item">
+            <strong style="color: var(--accent-secondary);">2. Short Message Ambiguity:</strong> "help refund" (< 4 words lacking order ID context).
+          </div>
+          <div class="evidence-item">
+            <strong style="color: var(--accent-secondary);">3. Sparse Retrieval Coverage:</strong> Cross-region UK vs US gift card rules causing low retrieval similarity (< 0.50).
+          </div>
+          <div class="evidence-item">
+            <strong style="color: var(--accent-secondary);">4. False Escalation on Standard Phrasing:</strong> Phrasing variations on password reset queries triggering safety escalation.
+          </div>
+          <div class="evidence-item">
+            <strong style="color: var(--accent-secondary);">5. Keyword Overlap Misclassification:</strong> Positive arrival keywords ("arrived on time") overshadowing broken physical item reports ("screen broken").
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Hiver SDE Intern Take-Home Assignment Solution — Built with Python, Scikit-Learn, and Vanilla JS Web Server
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      if (tabId === 'golden') {
+        loadGoldenSet();
+      }
+    }
+
+    function setQuery(text) {
+      document.getElementById('query-input').value = text;
+    }
+
+    async function processQuery() {
+      const text = document.getElementById('query-input').value.trim();
+      if (!text) return alert('Please enter a query.');
+
+      document.getElementById('output-spinner').style.display = 'inline';
+      document.getElementById('results-placeholder').style.display = 'none';
+
+      try {
+        const res = await fetch('/api/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+
+        document.getElementById('output-spinner').style.display = 'none';
+        document.getElementById('results-container').style.display = 'block';
+
+        const banner = document.getElementById('decision-banner');
+        banner.className = 'decision-banner ' + data.action;
+        document.getElementById('res-action').innerText = data.action;
+        document.getElementById('res-reason').innerText = data.decision_reason;
+        document.getElementById('res-evidence-strength').innerText = data.evidence_strength.toFixed(2);
+
+        document.getElementById('res-intent').innerText = data.intent;
+        document.getElementById('res-confidence').innerText = (data.intent_confidence * 100).toFixed(1) + '%';
+
+        const evidenceDiv = document.getElementById('evidence-list');
+        evidenceDiv.innerHTML = '';
+        if (data.retrieved_evidence && data.retrieved_evidence.length > 0) {
+          data.retrieved_evidence.forEach((item, idx) => {
+            evidenceDiv.innerHTML += `
+              <div class="evidence-item">
+                <div class="evidence-header">
+                  <span>Match #${idx+1}</span>
+                  <span>Similarity: ${(item.similarity*100).toFixed(0)}%</span>
+                </div>
+                <div><strong>Query:</strong> "${item.customer_message}"</div>
+                <div><strong>Resolution:</strong> ${item.resolution}</div>
+              </div>
+            `;
+          });
+        } else {
+          evidenceDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">No historical evidence matches found.</div>';
+        }
+
+        document.getElementById('res-reply').innerText = data.draft_reply;
+
+      } catch (err) {
+        document.getElementById('output-spinner').style.display = 'none';
+        alert('Error processing query: ' + err.message);
+      }
+    }
+
+    async function loadGoldenSet() {
+      const tbody = document.getElementById('golden-tbody');
+      try {
+        const res = await fetch('/api/golden');
+        const data = await res.json();
+        tbody.innerHTML = '';
+        data.slice(0, 30).forEach(row => {
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${row.id}</strong></td>
+              <td>${row.text}</td>
+              <td><span class="chip">${row.true_intent}</span></td>
+              <td><span style="font-weight: 600; color: ${row.expected_action === 'AUTO_HANDLE' ? 'var(--success-green)' : 'var(--danger-red)'}">${row.expected_action}</span></td>
+              <td>${row.difficulty_score}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5">Failed to load Golden Set.</td></tr>';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Environment & Virtual Environments
+.venv/
+.venv_test/
+venv/
+ENV/
+env/
+.env
+
+# Large raw datasets (exclude 500MB twcs.csv)
+data/raw/twcs.csv
+
+# Cache & Build Artifacts
+.cache/
+artifacts/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

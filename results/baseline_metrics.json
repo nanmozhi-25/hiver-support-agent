@@ -1,0 +1,77 @@
+{
+  "model": "TF-IDF + Logistic Regression",
+  "accuracy": 0.915,
+  "macro_precision": 0.8293,
+  "macro_recall": 0.8629,
+  "macro_f1": 0.8429,
+  "weighted_f1": 0.9174,
+  "per_intent": {
+    "account_access": {
+      "precision": 0.6666666666666666,
+      "recall": 0.8,
+      "f1-score": 0.7272727272727273,
+      "support": 5.0
+    },
+    "damaged_defective": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1.0
+    },
+    "delivery_delay": {
+      "precision": 0.7931034482758621,
+      "recall": 0.92,
+      "f1-score": 0.8518518518518519,
+      "support": 25.0
+    },
+    "digital_prime_issue": {
+      "precision": 0.6923076923076923,
+      "recall": 0.9,
+      "f1-score": 0.782608695652174,
+      "support": 10.0
+    },
+    "general_inquiry": {
+      "precision": 0.9785714285714285,
+      "recall": 0.9319727891156463,
+      "f1-score": 0.9547038327526133,
+      "support": 147.0
+    },
+    "order_cancellation": {
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1-score": 0.5,
+      "support": 2.0
+    },
+    "payment_billing": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1.0
+    },
+    "refund_request": {
+      "precision": 0.8333333333333334,
+      "recall": 0.7142857142857143,
+      "f1-score": 0.7692307692307693,
+      "support": 7.0
+    },
+    "return_exchange": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 2.0
+    },
+    "accuracy": 0.915,
+    "macro avg": {
+      "precision": 0.8293313965727758,
+      "recall": 0.86291761148904,
+      "f1-score": 0.8428519863066817,
+      "support": 200.0
+    },
+    "weighted avg": {
+      "precision": 0.9238366489832007,
+      "recall": 0.915,
+      "f1-score": 0.917424128442156,
+      "support": 200.0
+    }
+  }
+}
