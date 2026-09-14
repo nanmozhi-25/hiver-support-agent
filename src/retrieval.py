@@ -91,21 +91,32 @@ class ResolutionRetriever:
 
         return {"results": results}
 
+ARTIFACT_INDEX_PATH = os.path.join(os.path.dirname(__file__), "..", "artifacts", "retrieval_index.pkl")
+
     def _save_index(self):
-        os.makedirs(os.path.dirname(INDEX_CACHE_PATH), exist_ok=True)
-        with open(INDEX_CACHE_PATH, "wb") as f:
-            pickle.dump({"vectorizer": self.vectorizer, "doc_matrix": self.doc_matrix, "corpus_df": self.corpus_df}, f)
+        for path in [ARTIFACT_INDEX_PATH, INDEX_CACHE_PATH]:
+            try:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, "wb") as f:
+                    pickle.dump({"vectorizer": self.vectorizer, "doc_matrix": self.doc_matrix, "corpus_df": self.corpus_df}, f)
+                break
+            except Exception:
+                pass  # Ignore read-only filesystem errors on Vercel
 
     def _load_or_build_index(self):
-        if os.path.exists(INDEX_CACHE_PATH):
-            with open(INDEX_CACHE_PATH, "rb") as f:
-                data = pickle.load(f)
-                self.vectorizer = data["vectorizer"]
-                self.doc_matrix = data["doc_matrix"]
-                self.corpus_df = data["corpus_df"]
-                self.is_indexed = True
-        else:
-            self.build_index()
+        for path in [ARTIFACT_INDEX_PATH, INDEX_CACHE_PATH]:
+            if os.path.exists(path):
+                try:
+                    with open(path, "rb") as f:
+                        data = pickle.load(f)
+                        self.vectorizer = data["vectorizer"]
+                        self.doc_matrix = data["doc_matrix"]
+                        self.corpus_df = data["corpus_df"]
+                        self.is_indexed = True
+                        return
+                except Exception:
+                    pass
+        self.build_index()
 
 
 if __name__ == "__main__":

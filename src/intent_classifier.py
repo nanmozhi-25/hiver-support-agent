@@ -86,30 +86,42 @@ class IntentClassifier:
     def predict_batch(self, texts: List[str]) -> List[Dict[str, Any]]:
         return [self.predict(t) for t in texts]
 
+ARTIFACT_MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "artifacts", "intent_classifier.pkl")
+
     def _save_model(self):
-        os.makedirs(os.path.dirname(MODEL_CACHE_PATH), exist_ok=True)
-        with open(MODEL_CACHE_PATH, "wb") as f:
-            pickle.dump({"vectorizer": self.vectorizer, "clf": self.clf}, f)
+        for path in [ARTIFACT_MODEL_PATH, MODEL_CACHE_PATH]:
+            try:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, "wb") as f:
+                    pickle.dump({"vectorizer": self.vectorizer, "clf": self.clf}, f)
+                break
+            except Exception:
+                pass  # Ignore read-only filesystem errors on Vercel
 
     def _load_or_fallback_train(self):
-        if os.path.exists(MODEL_CACHE_PATH):
-            with open(MODEL_CACHE_PATH, "rb") as f:
-                data = pickle.load(f)
-                self.vectorizer = data["vectorizer"]
-                self.clf = data["clf"]
-                self.is_fitted = True
+        for path in [ARTIFACT_MODEL_PATH, MODEL_CACHE_PATH]:
+            if os.path.exists(path):
+                try:
+                    with open(path, "rb") as f:
+                        data = pickle.load(f)
+                        self.vectorizer = data["vectorizer"]
+                        self.clf = data["clf"]
+                        self.is_fitted = True
+                        return
+                except Exception:
+                    pass
+
+        # Fallback auto-train on processed train set
+        train_csv = os.path.join(os.path.dirname(__file__), "..", "data", "processed", "train.csv")
+        if os.path.exists(train_csv):
+            df_train = pd.read_csv(train_csv)
+            X_train = df_train["cleaned_customer_text"].fillna("").tolist()
+            
+            from eval.build_golden_set import assign_intent_and_action
+            y_train = [assign_intent_and_action(t)[0] for t in X_train]
+            self.train(X_train, y_train)
         else:
-            # Fallback auto-train on processed train set
-            train_csv = os.path.join(os.path.dirname(__file__), "..", "data", "processed", "train.csv")
-            if os.path.exists(train_csv):
-                df_train = pd.read_csv(train_csv)
-                X_train = df_train["cleaned_customer_text"].fillna("").tolist()
-                
-                from eval.build_golden_set import assign_intent_and_action
-                y_train = [assign_intent_and_action(t)[0] for t in X_train]
-                self.train(X_train, y_train)
-            else:
-                raise RuntimeError("Training data not found! Run src.prepare_data first.")
+            raise RuntimeError("Training data not found! Run src.prepare_data first.")
 
 
 if __name__ == "__main__":

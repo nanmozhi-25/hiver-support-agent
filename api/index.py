@@ -19,40 +19,47 @@ pipeline_instance = None
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        parsed_path = urllib.parse.urlparse(self.path)
-        path = parsed_path.path
+        try:
+            parsed_path = urllib.parse.urlparse(self.path)
+            path = parsed_path.path
 
-        if path == "/api/metrics":
-            metrics_path = os.path.join(os.path.dirname(__file__), "..", "results", "metrics.json")
-            self.send_response(200)
+            if path == "/api/metrics":
+                metrics_path = os.path.join(os.path.dirname(__file__), "..", "results", "metrics.json")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                if os.path.exists(metrics_path):
+                    with open(metrics_path, "r", encoding="utf-8") as f:
+                        self.wfile.write(f.read().encode("utf-8"))
+                else:
+                    self.wfile.write(json.dumps({"error": "Metrics not found"}).encode("utf-8"))
+                return
+
+            elif path == "/api/golden":
+                golden_path = os.path.join(os.path.dirname(__file__), "..", "data", "golden", "golden_set.csv")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                if os.path.exists(golden_path):
+                    import pandas as pd
+                    df = pd.read_csv(golden_path)
+                    samples = df.to_dict(orient="records")
+                    self.wfile.write(json.dumps(samples).encode("utf-8"))
+                else:
+                    self.wfile.write(json.dumps([]).encode("utf-8"))
+                return
+
+            else:
+                self.send_response(404)
+                self.end_headers()
+        except Exception as e:
+            self.send_response(500)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            if os.path.exists(metrics_path):
-                with open(metrics_path, "r", encoding="utf-8") as f:
-                    self.wfile.write(f.read().encode("utf-8"))
-            else:
-                self.wfile.write(json.dumps({"error": "Metrics not found"}).encode("utf-8"))
-            return
-
-        elif path == "/api/golden":
-            golden_path = os.path.join(os.path.dirname(__file__), "..", "data", "golden", "golden_set.csv")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            if os.path.exists(golden_path):
-                import pandas as pd
-                df = pd.read_csv(golden_path)
-                samples = df.to_dict(orient="records")
-                self.wfile.write(json.dumps(samples).encode("utf-8"))
-            else:
-                self.wfile.write(json.dumps([]).encode("utf-8"))
-            return
-
-        else:
-            self.send_response(404)
-            self.end_headers()
+            self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
 
     def do_POST(self):
         parsed_path = urllib.parse.urlparse(self.path)
