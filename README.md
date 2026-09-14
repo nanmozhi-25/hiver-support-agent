@@ -2,6 +2,12 @@
 
 Production-quality AI customer-support agent and evaluation framework built for the **Hiver SDE Intern Take-Home Assignment**. Based on historical customer support interactions from the Twitter Customer Support dataset (`twcs.csv`), focused on **AmazonHelp**.
 
+## 🎥 Project Demo
+
+Watch the complete demo of the **AI Support Agent & Evaluation Dashboard**:
+
+▶️ **[Watch Demo Video](https://drive.google.com/file/d/1d-lLj9l77j0-dbCeTd8DcTBV4Lu9O90t/view?usp=drive_link)**
+
 ---
 
 ## 1. Project Overview
